@@ -771,8 +771,8 @@ function ready(){
 	});
 	
 	
-	 d3.csv("data/craneAndDerrick.csv",function(data){
-		//d3.csv("https://raw.githubusercontent.com/NYCDOB/data_store/master/facadeLL11.csv",function(data){
+	 
+		d3.csv("https://raw.githubusercontent.com/NYCDOB/Maps/data/craneAndDerrick.csv",function(data){
 				points = data.filter(function(d) {
 					if( (+d["latitude"] != 0) && (+d["longitude"] !=0 ) ){
 						return d;
