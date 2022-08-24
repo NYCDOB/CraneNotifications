@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html>
+  <title>Crane Notifications</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveNB_A1enlargements/keen/keen-dashboards.css" />
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css' rel='stylesheet' type='text/css'/>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/r-2.1.0/se-1.2.0/datatables.min.css">
+  <link href="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.css" rel="stylesheet" type="text/css">
+  <style>
+
+
+body {
+	background-color: white;
+}
+
+#map {
+	height: 100%;
+	width: 100%;
+	background-color: #333;
+	pointer-events: all;
+}
+
+.arrivalPnt{
+	fill: #59a14f;
+	fill-opacity: .7;
+	stroke: #fff;
+
+}
+.assemblyPnt{
+	fill: #f28e2c;
+	fill-opacity: .7;
+	stroke: #fff;
+
+}
+.disassemblyPnt{
+	fill: #b55a9d;
+	fill-opacity: .7;
+	stroke: #fff;
+
+}
+.fndPourPnt{
+	fill: #DF3B20;
+	fill-opacity: .7;
+	stroke: #fff;
+
+}
+.otherPnt{
+	fill: #707070;
+	fill-opacity: .7;
+	stroke: #fff;
+
+}
+.tooltip {
+	color: #222;
+	background: #fff;
+	padding: .5em;
+	text-shadow: #f5f5f5 0 1px 0;
+	border-radius: 7px; 
+	box-shadow: 0px 0px 2px 0px #a6a6a6; 
+	opacity: 0.9; 
+	position: absolute;
+	visibility: hidden;
+}
+
+svg {
+	display: block;
+}
+
+
+#chart-01{
+    box-sizing: border-box;
+    width: 100%;
+	<!-- height: 150px; -->
+	height: 100%;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #dfdfdf;
+	<!-- margin: 0px 0px 12px; -->
+}
+
+#chart-arrival{
+    box-sizing: border-box;
+    width: 100%;
+	<!-- height: 150px; -->
+	height: 100%;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #dfdfdf;
+	<!-- margin: 0px 0px 12px; -->
+}
+
+#chart-assembly{
+    box-sizing: border-box;
+    width: 100%;
+	<!-- height: 150px; -->
+	height: 100%;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #dfdfdf;
+	<!-- margin: 0px 0px 12px; -->
+}
+
+#chart-disassembly{
+    box-sizing: border-box;
+    width: 100%;
+	<!-- height: 150px; -->
+	height: 100%;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #dfdfdf;
+	<!-- margin: 0px 0px 12px; -->
+}
+#chart-fndPour{
+    box-sizing: border-box;
+    width: 100%;
+	<!-- height: 150px; -->
+	height: 100%;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #dfdfdf;
+	<!-- margin: 0px 0px 12px; -->
+}
+
+#chart-boro-cranes{
+    box-sizing: border-box;
+    width: 100%;
+	/* height: 130px; */
+	height: 100%;
+    float: left;
+	background-color: #dfdfdf;
+	margin-bottom: 10px;
+}
+#chart-boro-arrival{
+    box-sizing: border-box;
+    width: 100%;
+	/* height: 130px; */
+	height: 100%;
+    float: left;
+	background-color: #dfdfdf;
+	margin-bottom: 10px;
+}
+#chart-boro-assembly{
+    box-sizing: border-box;
+    width: 100%;
+	/* height: 130px; */
+	height: 100%;
+    float: left;
+	background-color: #dfdfdf;
+	margin-bottom: 10px;
+}
+#chart-boro-disassembly{
+    box-sizing: border-box;
+    width: 100%;
+	/* height: 130px; */
+	height: 100%;
+    float: left;
+	background-color: #dfdfdf;
+	margin-bottom: 10px;
+}
+#chart-boro-fndPour{
+    box-sizing: border-box;
+    width: 100%;
+	/* height: 130px; */
+	height: 100%;
+    float: left;
+	background-color: #dfdfdf;
+	margin-bottom: 10px;
+}
+
+#chart-status{
+    box-sizing: border-box;
+    width: 100%;
+	height: 180px;
+    float: left;
+	background-color: #dfdfdf;
+	margin-bottom: 10px;
+}
+#borocranes{
+	/* margin-top: 10px; */
+	padding: 0px;
+	height: 100px;
+	width: 100%;
+	background-color: #fff;
+}
+#boroArrival{
+	/* margin-top: 10px; */
+	padding: 0px;
+	height: 100px;
+	width: 100%;
+	background-color: #fff;
+}
+#boroAssembly{
+	/* margin-top: 10px; */
+	padding: 0px;
+	height: 100px;
+	width: 100%;
+	background-color: #fff;
+}
+#boroDisassembly{
+	/* margin-top: 10px; */
+	padding: 0px;
+	height: 100px;
+	width: 100%;
+	background-color: #fff;
+}
+#boroFndPour{
+	/* margin-top: 10px; */
+	padding: 0px;
+	height: 100px;
+	width: 100%;
+	background-color: #fff;
+}
+
+
+.summarytxt{
+	font-size: 20px;
+	font-weight: bold;
+	color: #7b7b7b;
+	font-family: 'Open Sans', sans-serif; 
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	line-height: 97%;
+	padding-top: 5px;
+}
+
+#summary1_cranes{
+	font-size: 22px;
+	font-weight: bold;
+	color: #7899b0;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 110%;
+	
+}
+
+#summaryArrival{
+	font-size: 22px;
+	font-weight: bold;
+	color: #59a14f;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 110%;
+	
+}
+
+#summaryAssembly{
+	font-size: 22px;
+	font-weight: bold;
+	color: #f28e2c;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 110%;
+	
+}
+
+#summaryDisassembly{
+	font-size: 22px;
+	font-weight: bold;
+	color: #b55a9d;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 110%;
+	
+}
+#summaryFndPour{
+	font-size: 22px;
+	font-weight: bold;
+	color: #DF3B20;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 110%;
+	
+}
+
+.ui {
+	top: 10px;
+	left: 50px;
+	padding: 8px;
+	position: absolute;
+	background: white;
+	background: rgba(255,255,255,0.9);
+	border: 2px solid #707070;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 7px;
+	width: 280px;
+}
+
+
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + #sliderArrival {
+  background-color: #59a14f;
+}
+
+input:focus + #sliderArrival {
+  box-shadow: 0 0 1px #59a14f;
+}
+input:checked + #sliderAssembly {
+  background-color: #f28e2c;
+}
+
+input:focus + #sliderAssembly {
+  box-shadow: 0 0 1px #f28e2c;
+}
+input:checked + #sliderDisassembly {
+  background-color: #b55a9d;
+}
+
+input:focus + #sliderDisassembly {
+  box-shadow: 0 0 1px #b55a9d;
+}
+input:checked + #sliderFndPour {
+  background-color: #DF3B20;
+}
+
+input:focus + #sliderFndPour {
+  box-shadow: 0 0 1px #DF3B20;
+}
+input:checked + #sliderNoRpt {
+  background-color: #999A9C;
+}
+
+input:focus + #sliderNoRpt {
+  box-shadow: 0 0 1px #999A9C;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(12px);
+  -ms-transform: translateX(12px);
+  transform: translateX(12px);
+}
+#sliderTxt {
+	line-height: 12px;
+	vertical-align: middle;
+}
+.chart-wrapper {
+  background: #fff;
+  border: 0px !important;
+  border-radius: 0px !important; 
+  margin-bottom: 0px !important;
+}
+.chart-wrapper .chart-stage {
+  overflow: hidden;
+  padding: 5px 5px !important;
+  position: relative;
+}
+
+</style>
+<body>
+
+<div class="container-fluid dobmain" style="margin-top:20px;">
+	<div class="row">
+		  <div class="col-lg-9" style="height:96vh">
+			  <div class="chart-stage" id="map-container" style="border:1px solid black;height:100%;width:100%">
+				<div id="map">
+				<svg></svg>
+					<div id="ui-container" class="ui" style="z-index: 401">
+						<h5><b>CRANE STATUS</b></h5>
+						<h6>(TOGGLE LAYERS ON & OFF)</h6>
+
+						<span style="display:inline-block;">
+						<label class="switch">
+							<input type="checkbox" checked="true" id="chkArrival">
+							<span class="slider" id="sliderArrival"></span>						
+						</label>
+						
+						<span class="en" id="sliderTxt">ARRIVAL</span>
+						</span>
+						<br/>
+
+						<span style="display:inline-block;">
+							<label class="switch">
+								<input type="checkbox" checked="true" id="chkAssembly">
+								<span class="slider" id="sliderAssembly"></span>
+							</label>
+							<span class="en" id="sliderTxt">ASSEMBLY</span>
+						</span>
+						<br/>
+
+						<span style="display:inline-block;">
+							<label class="switch">
+								<input type="checkbox" checked="true" id="chkDisassembly">
+								<span class="slider" id="sliderDisassembly"></span>
+							</label>
+							<span class="en" id="sliderTxt">DISASSEMBLY</span>
+						</span>
+						<br/>
+
+						<span style="display:inline-block;">
+							<label class="switch">
+								<input type="checkbox" checked="true" id="chkFndPour">
+								<span class="slider" id="sliderFndPour"></span>
+							</label>
+							<span class="en" id="sliderTxt">TOWER CRANE FOUNDATION POUR</span>
+						</span>
+						<br/>
+					</div>
+				</div>
+			  </div>
+		  </div>
+			  <div class="col-lg-3" style="height:96vh;">
+				<div class="newchart" style="padding:5px 5px 0px 5px;border:1px solid black;height:100%;width:100%;">
+					<div class="chart-wrapper">
+						<div id="chart-01">
+							<div class="summarytxt" >TOTAL CRANE NOTIFICATIONS: 
+								<span id="summary1_cranes"></span>
+							</div>
+						</div>	
+						<div class="chart-stage" id="chart-boro-cranes">
+							<svg id="borocranes"></svg>
+						</div>
+					</div>
+
+					<div class="chart-wrapper">
+						<div class="chart-stage" id="chart-arrival">
+						  <div class="summarytxt" >ARRIVAL: 
+							  <span id="summaryArrival"></span>
+						  </div>
+						</div>					
+						<div class="chart-stage" id="chart-boro-arrival">
+							<svg id="boroArrival"></svg>
+						</div>
+					</div>
+
+					<div class="chart-wrapper">
+						<div class="chart-stage" id="chart-assembly">
+						  <div class="summarytxt" >ASSEMBLY: 
+							  <span id="summaryAssembly"></span>
+						  </div>
+						</div>
+						<div class="chart-stage" id="chart-boro-assembly">
+							<svg id="boroAssembly"></svg>
+						</div>
+					</div>
+
+					<div class="chart-wrapper">
+						<div class="chart-stage" id="chart-disassembly">
+						  <div class="summarytxt" >DISASSEMBLY: 
+							  <span id="summaryDisassembly"></span>
+						  </div>
+						</div>
+						<div class="chart-stage" id="chart-boro-disassembly">
+							<svg id="boroDisassembly"></svg>
+						</div>
+					</div>
+
+					<div class="chart-wrapper">
+						<div class="chart-stage" id="chart-fndPour">
+						  <div class="summarytxt" >TOWER CRANE FOUNDATION POUR: 
+							  <span id="summaryFndPour"></span>
+						  </div>
+						</div>
+						<div class="chart-stage" id="chart-boro-fndPour">
+							<svg id="boroFndPour"></svg>
+						</div>
+					</div>
+				</div>
+			  </div>
+	</div>
+	<p class="small text-muted" style=" position:relative; bottom:0px;">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a></p>	
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-format@3"></script>
+<script src="https://nycdob.github.io/EssentialActiveConstruction/Leaflet.D3SvgOverlay-master/L.D3SvgOverlay.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.12/r-2.1.0/se-1.2.0/datatables.min.js"  type="text/javascript" charset="utf8" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
+<script src="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.js"></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+<script type="text/javascript" src="https://nycdob.github.io/ActiveNB_A1enlargements/keen/keen.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.1/js/dataTables.rowGroup.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.20/api/fnSortNeutral.js"></script>
+
+<script>
+
+$(document).ready(function(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1;
+	var yyyy = today.getFullYear();
+	today = mm + '/' + dd + '/' + yyyy;	
+	d3.select("#today").html(today);
+	var latlong = [];
+	var selection = [];
+	var formatDate = d3.time.format("%-m/%-d/%Y").parse;
+	var numberFormat = d3.format(",.0f");
+	var legendNumFormat = d3.format(",");
+    L.Control.include({
+      _refocusOnMap: L.Util.falseFn // Do nothing.
+    });	
+var map = L.map('map').setView([40.73070689340102, -73.98174400051798], 14);
+L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+
+
+var tooltip = d3.select('#map').append('div')//var tooltip = d3.select('body').append('div')
+	.on('mouseover', function(d, i){
+		tooltip.transition().duration(0);
+	})
+	.on('mouseout', function(d, i){
+		tooltip.transition().delay(500).style('visibility', 'hidden');
+	})
+	.attr('class', 'tooltip');
+	
+
+	
+var width = $("#map").width(),
+	height = $("#map").height(),
+	points = [],
+	table_map = [],
+	filteredData,
+	latLngs = [],
+	pointsOverlay,
+	legendShed,
+	legendCD,
+	cat,
+	cdSheds,
+	sheds_CD,
+	previousColor,
+	radius;
+	
+onload = ready();
+
+	
+function ready(){
+
+	pointsOverlay = L.d3SvgOverlay(function(sel,proj){
+		var pointsUpd = sel.selectAll('circle').data(points);
+
+		function pendVal(pend) { 
+		if(pend=='Y'){
+			return 'TRUE'} else {
+				return 'FALSE'
+			}
+		}
+		pointsUpd.enter()
+			.append('circle')		
+			.attr('cx',function(d){return proj.latLngToLayerPoint(d.latLng).x;})
+			.attr('cy',function(d){return proj.latLngToLayerPoint(d.latLng).y;})
+			.attr('class', function(d){
+				switch(d.Status){
+					case 'Arrival':
+						return 'arrivalPnt';
+						break;
+					case 'Assembly':
+						return 'assemblyPnt';
+						break;
+					case 'Disassembly':
+						return 'disassemblyPnt';
+						break;
+					case 'Tower Crane Foundation Pour':
+						return 'fndPourPnt';
+						break;
+					<!-- case 'No Report Filed': -->
+						<!-- return 'pointNoRptFiled'; -->
+						<!-- break;  -->
+				}
+			})
+			
+			.on('click', function(d){
+
+				if(d3.select(this).style("fill-opacity") != 0){
+					tooltip.style("visibility", "visible");
+					tooltip.html(
+						'STATUS: ' + d.status + '</br>' +
+						'BIN: ' + d.bin + '</br>' +								
+						'ADDRESS: '+ d.houseNum + ' ' + d.street + ', ' + d.Borough + '</br>' +
+						'BLOCK: ' + d.block + '</br>' +
+						'LOT: '+ d.lot + '</br>' +
+						'CRANE NUMBER: '+ d.craneNum + '</br>' +
+						'EQUIPMENT TYPE: ' + d.equipType + '</br>' +
+						'EQUIPMENT BUSINESS NAME: ' + d.equipBusName + '</br>' +
+						'EQUIPMENT EMAIL: ' + d.equipEmail + '</br>' +
+						'APPLICANT EMAIL: ' + d.applEmail + '</br>' +
+						'ACTION DATE: ' + d.actionDate + '</br>' +
+						'ARRIVAL DATE: ' + d.arrivalDate + '</br>' +
+						'FOUNDATION POUR DATE: ' + d.fndPourDate + '</br>' +
+						'ASSEMBLY DATE: ' + d.assemblyDate + '</br>' +
+						'DISASSEMBLY DATE: ' + d.disassemblyDate + '</br>' +
+						'APPROVAL STATUS: ' + d.apprStatus + '</br>' +
+						'ON SITE MORE THAN 48 HRS?: ' + d.craneMore2Days
+					)
+					if (d3.event.pageX > (width - 200)) {
+					   tooltip.style("left", (d3.event.pageX - 350) + "px");
+					} else {
+					   tooltip.style("left", (d3.event.pageX + 20) + "px")
+							.style("top", (d3.event.pageY -30) + "px");
+					}
+					if (d3.event.pageY > (height - 150)) {
+					   tooltip.style("top", (d3.event.pageY -100) + "px");
+					} else {
+					   tooltip.style("top", (d3.event.pageY -30) + "px");
+					}
+				}
+
+			})
+			.on("mouseover", function(d, i){
+				previousColor = d3.select(this).style("fill");
+				tooltip.transition().duration(0); 
+				$(this).attr("style", "cursor: pointer; fill: #eef442; fill-opacity: 0.7;");			
+			})
+			.on("mouseout", function(d, i){			
+				d3.select(this).style("fill",previousColor);
+				d3.select(this).style( "fill-opacity",0.7);
+				return tooltip.transition().delay(500).style("visibility", "hidden");
+			});
+		
+			pointsUpd.attr("stroke-width", 1 / proj.scale);
+			pointsUpd.attr("r", 6 /proj.scale);
+
+
+
+			var arrivalSlider = document.querySelector('input[id="chkArrival"]');
+				assemblySlider = document.querySelector('input[id="chkAssembly"]');
+				disassemblySlider = document.querySelector('input[id="chkDisassembly"]');
+				fndPourSlider = document.querySelector('input[id="chkFndPour"]');
+				//noRptSlider = document.querySelector('input[id="chkNoRpt"]');
+				
+				arrivalSlider.onchange = function(){
+						if(this.checked){
+							d3.selectAll(".arrivalPnt").filter(function(d) {
+								return d.status == "Arrival";
+							})
+							.style("display", "block");	
+
+						} else {
+							d3.selectAll(".arrivalPnt").filter(function(d) {
+								return d.status == "Arrival";
+							})
+							.style("display", "none");
+										
+						}
+				};		
+				
+				assemblySlider.onchange = function(){
+						if(this.checked){
+							d3.selectAll(".assemblyPnt").filter(function(d) {
+								return d.status == "Assembly";
+							})
+							.style("display", "block");	
+
+						} else {
+							d3.selectAll(".assemblyPnt").filter(function(d) {
+								return d.status == "Assembly";
+							})
+							.style("display", "none");
+										
+						}
+				};
+
+				disassemblySlider.onchange = function(){
+						if(this.checked){
+							d3.selectAll(".disassemblyPnt").filter(function(d) {
+								return d.status == "Disassembly";
+							})
+							.style("display", "block");	
+
+						} else {
+							d3.selectAll(".disassemblyPnt").filter(function(d) {
+								return d.status == "Disassembly";
+							})
+							.style("display", "none");
+										
+						}
+				};
+
+				fndPourSlider.onchange = function(){
+						if(this.checked){
+							d3.selectAll(".fndPourPnt").filter(function(d) {
+								return d.status == "Tower Crane Foundation Pour";
+							})
+							.style("display", "block");	
+
+						} else {
+							d3.selectAll(".fndPourPnt").filter(function(d) {
+								return d.status == "Tower Crane Foundation Pour";
+							})
+							.style("display", "none");
+										
+						}
+				};
+
+				<!-- noRptSlider.onchange = function(){ -->
+						<!-- if(this.checked){ -->
+							<!-- d3.selectAll(".pointNoRptFiled").filter(function(d) { -->
+								<!-- return d.status == "No Report Filed"; -->
+							<!-- }) -->
+							<!-- .style("display", "block");	 -->
+
+						<!-- } else { -->
+							<!-- d3.selectAll(".pointNoRptFiled").filter(function(d) { -->
+								<!-- return d.status == "No Report Filed"; -->
+							<!-- }) -->
+							<!-- .style("display", "none"); -->
+										
+						<!-- } -->
+				<!-- }; -->
+				
+		
+	});
+	
+	
+	 d3.csv("data/craneAndDerrick.csv",function(data){
+		//d3.csv("https://raw.githubusercontent.com/NYCDOB/data_store/master/facadeLL11.csv",function(data){
+				points = data.filter(function(d) {
+					if( (+d["latitude"] != 0) && (+d["longitude"] !=0 ) ){
+						return d;
+					}
+				}).map(function(d){
+				d.latLng = [+d["latitude"],+d["longitude"]];
+				d.bin = [d.crn_CN_OW_Mrl_Location_Bin_Number];				
+				d.houseNum = [d.crn_CN_OW_Mrl_Location_House_Num];
+				d.street = [d.crn_CN_OW_Mrl_Location_Street_Name];
+				d.Borough = [d.crn_CN_OW_Mrl_Location_Borough.toUpperCase()];
+				d.block = [d.crn_CN_OW_Mrl_Location_Block];
+				d.lot = [d.crn_CN_OW_Mrl_Location_Lot];
+				d.craneNum = [d.crn_CN_Number];
+				d.equipType = [d.crn_CN_Equipment_Type];
+				d.equipBusName = [d.crn_CN_Equipment_User_Business_Name];
+				d.equipEmail = [d.crn_CN_Equipment_User_Email];
+				d.applEmail = [d.crn_OW_Applicant_Email];
+				d.status = [d.Status];
+				d.actionDate = [d.crn_Crane_Action_Date];
+				d.arrivalDate = [d.crn_Crane_Arrrival_Date];
+				d.fndPourDate = [d.crn_Tower_Crane_Foundation_Pour_Date];
+				d.assemblyDate = [d.crn_Crane_Assembly_Date];
+				d.disassemblyDate = [d.crn_Crane_Disassembly_Date];
+				d.disassemblyDate = [d.crn_Crane_Disassembly_Date];
+				d.apprStatus = [d.crn_CN_CD_OW_Status];
+				d.craneMore2Days = d["Will crane be on site for more than 48 hours"];
+			return d;
+			});
+			
+
+			pointsOverlay.addTo(map);
+			
+			d3.selectAll(".arrivalPnt").style("display", "block");
+			d3.selectAll(".assemblyPnt").style("display", "block");
+			d3.selectAll(".disassemblyPnt").style("display", "block");
+			d3.selectAll(".fndPourPnt").style("display", "block");
+			
+						
+
+		//CHARTS
+			
+			//TOTAL CRANE NOTIFICATIONS
+			var totalCranes = points.map(function(d) { return d.crn_Unique_Id });
+			console.log(totalCranes);
+			d3.select("#summary1_cranes").html(numberFormat(totalCranes.length));
+			
+			//BOROUGH TOTAL			
+			var nestBoroCranes = d3.nest()
+				.key(function(d){return d.crn_CN_OW_Mrl_Location_Borough.toUpperCase().trim();})//.sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(points)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				console.log(nestBoroCranes);
+				cranesBoroChart(nestBoroCranes);
+
+			//TOTAL ARRIVAL STATUS
+			var totalArrival = points.filter(function(d) { if(d.status == "Arrival") {return d.crn_Unique_Id} });
+			console.log(totalArrival);
+			d3.select("#summaryArrival").html(numberFormat(totalArrival.length));
+
+			//BOROUGH ARRIVAL			
+			var nestBoroArrival = d3.nest()
+				.key(function(d){return d.crn_CN_OW_Mrl_Location_Borough.toUpperCase().trim();})//.sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(totalArrival)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				console.log(nestBoroArrival);
+				arrivalBoroChart(nestBoroArrival);
+
+			//TOTAL ASSEMBLY STATUS
+			var totalAssembly = points.filter(function(d) { if(d.status == "Assembly") {return d.crn_Unique_Id} });
+			console.log(totalAssembly);
+			d3.select("#summaryAssembly").html(numberFormat(totalAssembly.length));
+
+			//BOROUGH ASSEMBLY			
+			var nestBoroAssembly = d3.nest()
+				.key(function(d){return d.crn_CN_OW_Mrl_Location_Borough.toUpperCase().trim();})//.sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(totalAssembly)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				console.log(nestBoroAssembly);
+				assemblyBoroChart(nestBoroAssembly);
+
+			//TOTAL DISASSEMBLY STATUS
+			var totalDisassembly = points.filter(function(d) { if(d.status == "Disassembly") {return d.crn_Unique_Id} });
+			console.log(totalDisassembly);
+			d3.select("#summaryDisassembly").html(numberFormat(totalDisassembly.length));
+
+			//BOROUGH DISASSEMBLY			
+			var nestBoroDisassembly = d3.nest()
+				.key(function(d){return d.crn_CN_OW_Mrl_Location_Borough.toUpperCase().trim();})//.sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(totalDisassembly)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				console.log(nestBoroDisassembly);
+				disassemblyBoroChart(nestBoroDisassembly);
+
+			//TOTAL FOUNDATION POUR STATUS
+			var totalFndPour = points.filter(function(d) { if(d.status == "Tower Crane Foundation Pour") {return d.crn_Unique_Id} });
+			console.log(totalFndPour);
+			d3.select("#summaryFndPour").html(numberFormat(totalFndPour.length));
+
+			//BOROUGH FOUNDATION POUR			
+			var nestBoroFndPour = d3.nest()
+				.key(function(d){return d.crn_CN_OW_Mrl_Location_Borough.toUpperCase().trim();})//.sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(totalFndPour)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				console.log(nestBoroFndPour);
+				fndPourBoroChart(nestBoroFndPour);
+
+
+
+
+
+
+			//CURRENT STATUS			
+			var nestFilingStatus = d3.nest()
+				.key(function(d){return (d.filingStatus);})//.sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(points)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				console.log(nestFilingStatus);
+				statusChart(nestFilingStatus);
+				
+				
+			//SUB CYCLES
+			var nestCycles = d3.nest()
+				.key(function(d) { return d.cycle; })
+				.rollup(function(v) {
+					return v.length;
+				})			
+				.entries(points)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })//.slice(0,5);	
+			console.log(nestCycles);
+			cycleChart(nestCycles);
+			
+			
+			//PENDING INSPECTIONS
+			var nestPending = d3.nest()
+				.key(function(d) { 
+					if(d.pending=='Y'){
+						return 'TRUE'} else {
+							return 'FALSE'
+						}
+					 })
+				.rollup(function(v) {
+					return v.length;
+				})
+				.entries(points)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })//.slice(0,5);	
+			console.log(nestPending);
+			pendChart(nestPending);
+			
+				
+			function cranesBoroChart(data){
+				var craneBoroData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					craneBoroData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#7899b0']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});		
+					
+					d3.select('#chart-boro-cranes svg')
+							.datum(craneBoroData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+
+			function arrivalBoroChart(data){
+				var arrivalBoroData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					arrivalBoroData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#59a14f']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});		
+					
+					d3.select('#chart-boro-arrival svg')
+							.datum(arrivalBoroData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+
+
+			function assemblyBoroChart(data){
+				var assemblyBoroData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					assemblyBoroData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#f28e2c']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});		
+					
+					d3.select('#chart-boro-assembly svg')
+							.datum(assemblyBoroData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+
+			function disassemblyBoroChart(data){
+				var disassemblyBoroData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					disassemblyBoroData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#b55a9d']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});		
+					
+					d3.select('#chart-boro-disassembly svg')
+							.datum(disassemblyBoroData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+
+			function fndPourBoroChart(data){
+				var fndPourBoroData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					fndPourBoroData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#DF3B20']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});		
+					
+					d3.select('#chart-boro-fndPour svg')
+							.datum(fndPourBoroData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+
+
+
+
+			function statusChart(data){
+				var statusData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					statusData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#7899b0']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});		
+					
+					d3.select('#chart-status svg')
+							.datum(statusData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+			
+			function cycleChart(data){
+				var shedCDData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					shedCDData[0].values.push(d)
+				})     
+				
+				
+				nv.addGraph(function() {				
+					var chart = nv.models.discreteBarChart()
+						.x(function (d) {  
+							return d.key 
+						})
+						.y(function (d) { 
+							return d.values 
+						})
+						.duration(250)
+						.margin({top: 15, right: 10, bottom: 20, left: 50})
+						.color(['#7899b0']);
+					chart.yAxis.tickFormat(d3.format(','));
+
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});										
+
+					d3.select('#subcycles')
+							.datum(shedCDData)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+				});
+			}
+			
+			function pendChart(data){
+				var pendData = [
+					{
+						key: "totals",
+						values: []
+					}
+				];
+
+				// populate the empty object with your data
+				data.forEach(function (d){
+					d.values = +d.values
+					pendData[0].values.push(d)
+				})     
+								
+					nv.addGraph(function() {				
+						var chart = nv.models.discreteBarChart()
+							.x(function (d) {  
+								return d.key 
+							})
+							.y(function (d) { 
+								return d.values 
+							})
+							.duration(250)
+							.margin({top: 15, right: 10, bottom: 20, left: 50})
+							.color(['#7899b0']);
+						chart.yAxis.tickFormat(d3.format(','));
+
+						chart.xAxis.axisLabelDistance(10);
+						chart.xAxis.tickFormat(function(d){
+							if (typeof this != 'undefined') {
+							var el = d3.select(this);
+							var p = d3.select(this.parentNode);
+							p.append("foreignObject")
+								.attr('x', -100)
+								.attr("width", 200)
+								.attr("height", 200)
+								.append("xhtml:p")
+								.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif; pointer-events: auto;')
+								.html(d);
+								el.remove();
+								return d;
+							}
+
+						});	
+											
+							d3.select('#pendInsp')
+									.datum(pendData)
+									.transition().duration(250)
+									.call(chart);
+							nv.utils.windowResize(chart.update);
+							return chart;
+					}
+				);
+				
+			}
+			
+	});	
+	
+		
+}
+
+	
+});	
+
+</script>
+</body>
+</html>
