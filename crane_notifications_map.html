@@ -227,7 +227,8 @@ svg {
 
 
 .summarytxt{
-	font-size: 20px;
+	/* font-size: 20px; */
+	font-size: 1vw;
 	font-weight: bold;
 	color: #7b7b7b;
 	font-family: 'Open Sans', sans-serif; 
@@ -238,7 +239,8 @@ svg {
 }
 
 #summary1_cranes{
-	font-size: 22px;
+	/* font-size: 20px; */
+	font-size: 1vw;
 	font-weight: bold;
 	color: #7899b0;
 	font-family: 'Open Sans', sans-serif;
@@ -249,7 +251,8 @@ svg {
 }
 
 #summaryArrival{
-	font-size: 22px;
+	/* font-size: 20px; */
+	font-size: 1vw;
 	font-weight: bold;
 	color: #59a14f;
 	font-family: 'Open Sans', sans-serif;
@@ -260,7 +263,8 @@ svg {
 }
 
 #summaryAssembly{
-	font-size: 22px;
+	/* font-size: 20px; */
+	font-size: 1vw;
 	font-weight: bold;
 	color: #f28e2c;
 	font-family: 'Open Sans', sans-serif;
@@ -271,7 +275,8 @@ svg {
 }
 
 #summaryDisassembly{
-	font-size: 22px;
+	/* font-size: 20px; */
+	font-size: 1vw;
 	font-weight: bold;
 	color: #b55a9d;
 	font-family: 'Open Sans', sans-serif;
@@ -281,7 +286,8 @@ svg {
 	
 }
 #summaryFndPour{
-	font-size: 22px;
+	/* font-size: 20px; */
+	font-size: 1vw;
 	font-weight: bold;
 	color: #DF3B20;
 	font-family: 'Open Sans', sans-serif;
@@ -771,8 +777,8 @@ function ready(){
 	});
 	
 	
-	 
-		d3.csv("https://raw.githubusercontent.com/NYCDOB/Maps/data/craneAndDerrick.csv",function(data){
+	 d3.csv("data/craneAndDerrick.csv",function(data){
+		//d3.csv("https://raw.githubusercontent.com/NYCDOB/data_store/master/facadeLL11.csv",function(data){
 				// points = data.filter(function(d) {
 				// 	if( (+d["latitude"] != 0) && (+d["longitude"] !=0 ) ){
 				// 		return d;
@@ -900,45 +906,7 @@ function ready(){
 
 
 
-			//CURRENT STATUS			
-			var nestFilingStatus = d3.nest()
-				.key(function(d){return (d.filingStatus);})//.sortKeys(d3.ascending)
-				.rollup(function(v) { 
-					return v.length;
-				})
-				.entries(points)
-				.sort(function(a, b){ return d3.descending(a.values, b.values); })
-				console.log(nestFilingStatus);
-				statusChart(nestFilingStatus);
-				
-				
-			//SUB CYCLES
-			var nestCycles = d3.nest()
-				.key(function(d) { return d.cycle; })
-				.rollup(function(v) {
-					return v.length;
-				})			
-				.entries(points)
-				.sort(function(a, b){ return d3.descending(a.values, b.values); })//.slice(0,5);	
-			console.log(nestCycles);
-			cycleChart(nestCycles);
-			
-			
-			//PENDING INSPECTIONS
-			var nestPending = d3.nest()
-				.key(function(d) { 
-					if(d.pending=='Y'){
-						return 'TRUE'} else {
-							return 'FALSE'
-						}
-					 })
-				.rollup(function(v) {
-					return v.length;
-				})
-				.entries(points)
-				.sort(function(a, b){ return d3.descending(a.values, b.values); })//.slice(0,5);	
-			console.log(nestPending);
-			pendChart(nestPending);
+
 			
 				
 			function cranesBoroChart(data){
@@ -1206,174 +1174,8 @@ function ready(){
 					return chart;
 				});
 			}
-
-
-
-
-			function statusChart(data){
-				var statusData = [
-					{
-						key: "totals",
-						values: []
-					}
-				];
-
-				// populate the empty object with your data
-				data.forEach(function (d){
-					d.values = +d.values
-					statusData[0].values.push(d)
-				})     
-				
-				
-				nv.addGraph(function() {				
-					var chart = nv.models.discreteBarChart()
-						.x(function (d) {  
-							return d.key 
-						})
-						.y(function (d) { 
-							return d.values 
-						})
-						.duration(250)
-						.margin({top: 15, right: 10, bottom: 20, left: 50})
-						.color(['#7899b0']);
-					chart.yAxis.tickFormat(d3.format(','));
-
-					chart.xAxis.tickFormat(function(d){
-						if (typeof this != 'undefined') {
-						 var el = d3.select(this);
-						 var p = d3.select(this.parentNode);
-						 p.append("foreignObject")
-							.attr('x', -100)
-							.attr("width", 200)
-							.attr("height", 200)
-							.append("xhtml:p")
-							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
-							.html(d);    
-							el.remove();
-							return d;
-						}
-					});		
-					
-					d3.select('#chart-status svg')
-							.datum(statusData)
-							.transition().duration(250)
-							.call(chart);
-					nv.utils.windowResize(chart.update);
-					return chart;
-				});
-			}
-			
-			function cycleChart(data){
-				var shedCDData = [
-					{
-						key: "totals",
-						values: []
-					}
-				];
-
-				// populate the empty object with your data
-				data.forEach(function (d){
-					d.values = +d.values
-					shedCDData[0].values.push(d)
-				})     
-				
-				
-				nv.addGraph(function() {				
-					var chart = nv.models.discreteBarChart()
-						.x(function (d) {  
-							return d.key 
-						})
-						.y(function (d) { 
-							return d.values 
-						})
-						.duration(250)
-						.margin({top: 15, right: 10, bottom: 20, left: 50})
-						.color(['#7899b0']);
-					chart.yAxis.tickFormat(d3.format(','));
-
-					chart.xAxis.tickFormat(function(d){
-						if (typeof this != 'undefined') {
-						 var el = d3.select(this);
-						 var p = d3.select(this.parentNode);
-						 p.append("foreignObject")
-							.attr('x', -100)
-							.attr("width", 200)
-							.attr("height", 200)
-							.append("xhtml:p")
-							.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif;')
-							.html(d);    
-							el.remove();
-							return d;
-						}
-					});										
-
-					d3.select('#subcycles')
-							.datum(shedCDData)
-							.transition().duration(250)
-							.call(chart);
-					nv.utils.windowResize(chart.update);
-					return chart;
-				});
-			}
-			
-			function pendChart(data){
-				var pendData = [
-					{
-						key: "totals",
-						values: []
-					}
-				];
-
-				// populate the empty object with your data
-				data.forEach(function (d){
-					d.values = +d.values
-					pendData[0].values.push(d)
-				})     
-								
-					nv.addGraph(function() {				
-						var chart = nv.models.discreteBarChart()
-							.x(function (d) {  
-								return d.key 
-							})
-							.y(function (d) { 
-								return d.values 
-							})
-							.duration(250)
-							.margin({top: 15, right: 10, bottom: 20, left: 50})
-							.color(['#7899b0']);
-						chart.yAxis.tickFormat(d3.format(','));
-
-						chart.xAxis.axisLabelDistance(10);
-						chart.xAxis.tickFormat(function(d){
-							if (typeof this != 'undefined') {
-							var el = d3.select(this);
-							var p = d3.select(this.parentNode);
-							p.append("foreignObject")
-								.attr('x', -100)
-								.attr("width", 200)
-								.attr("height", 200)
-								.append("xhtml:p")
-								.attr('style','word-wrap: break-word; text-align:center; font: normal 9px sans-serif; pointer-events: auto;')
-								.html(d);
-								el.remove();
-								return d;
-							}
-
-						});	
-											
-							d3.select('#pendInsp')
-									.datum(pendData)
-									.transition().duration(250)
-									.call(chart);
-							nv.utils.windowResize(chart.update);
-							return chart;
-					}
-				);
-				
-			}
 			
 	});	
-	
 		
 }
 
