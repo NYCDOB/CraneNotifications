@@ -773,11 +773,12 @@ function ready(){
 	
 	 
 		d3.csv("https://raw.githubusercontent.com/NYCDOB/Maps/data/craneAndDerrick.csv",function(data){
-				points = data.filter(function(d) {
-					if( (+d["latitude"] != 0) && (+d["longitude"] !=0 ) ){
-						return d;
-					}
-				}).map(function(d){
+				// points = data.filter(function(d) {
+				// 	if( (+d["latitude"] != 0) && (+d["longitude"] !=0 ) ){
+				// 		return d;
+				// 	}
+				// }).map(function(d){
+				points = data.map(function(d){
 				d.latLng = [+d["latitude"],+d["longitude"]];
 				d.bin = [d.crn_CN_OW_Mrl_Location_Bin_Number];				
 				d.houseNum = [d.crn_CN_OW_Mrl_Location_House_Num];
